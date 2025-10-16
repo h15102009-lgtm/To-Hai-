@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gửi Hải Vy 💖</title>
+  <style>
+    :root{
+      --heart-size: min(48vmin, 320px); /* responsive size */
+      --pink-1: #ff99cc;
+      --pink-2: #ff3399;
+      --bg: #ffe6f0;
+      --white: #ffffff;
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      background: var(--bg);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .page {
+      min-height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      box-sizing:border-box;
+    }
+
+    .card {
+      display:grid;
+      place-items:center;
+      gap:18px;
+      width:fit-content;
+      text-align:center;
+    }
+
+    /* heart */
+    .heart-wrapper{
+      position:relative;
+      width:var(--heart-size);
+      height:calc(var(--heart-size) * 0.9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .heart {
+      width: calc(var(--heart-size) * 0.6);
+      height: calc(var(--heart-size) * 0.6);
+      background: var(--pink-1);
+      position:relative;
+      transform: rotate(-45deg);
+      border-radius:8%;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08), inset 0 -6px 12px rgba(0,0,0,0.02);
+    }
+    .heart::before,
+    .heart::after{
+      content:"";
+      position:absolute;
+      width:100%;
+      height:100%;
+      background: var(--pink-1);
+      border-radius:50%;
+    }
+    .heart::before{ top:-50%; left:0; }
+    .heart::after { left:50%; top:0; }
+
+    /* keep overlay content unrotated */
+    .overlay {
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      pointer-events:none; /* let button be clickable separately */
+    }
+
+    h1{
+      margin:0 0 6px 0;
+      color:var(--white);
+      font-size:clamp(18px,3.6vmin,28px);
+      text-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+
+    .controls {
+      pointer-events:auto; /* enable clicks */
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+      padding:10px 16px;
+      background:var(--white);
+      color:var(--pink-2);
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    }
+    button:active{ transform:translateY(1px); }
+
+    #message {
+      margin-top:12px;
+      font-size:clamp(16px,3.2vmin,20px);
+      color:var(--white);
+      display:none;
+      pointer-events:none;
+      text-shadow: 0 3px 10px rgba(0,0,0,0.12);
+    }
+
+    /* small heartbeat animation */
+    @keyframes heartbeat {
+      0% { transform: rotate(-45deg) scale(1); }
+      25% { transform: rotate(-45deg) scale(1.05); }
+      40% { transform: rotate(-45deg) scale(0.98); }
+      60% { transform: rotate(-45deg) scale(1.02); }
+      100% { transform: rotate(-45deg) scale(1); }
+    }
+
+    .heart.animated {
+      animation: heartbeat 1.6s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    /* Respect user's reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      .heart.animated { animation: none; }
+    }
+
+    /* small screens: reduce spacing */
+    @media (max-width:420px){
+      .card { gap:10px; }
+      button { padding:8px 12px; font-size:13px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page" aria-labelledby="title">
+    <section class="card" aria-live="polite">
+      <div class="heart-wrapper" aria-hidden="true">
+        <div class="heart animated" id="heartShape"></div>
+
+        <div class="overlay" aria-hidden="false">
+          <h1 id="title">Hải Vy 💕</h1>
+          <div class="controls">
+            <button id="toggleBtn" aria-controls="message" aria-pressed="false" type="button">Nhấn vào đây</button>
+            <button id="hideBtn" type="button" aria-hidden="true" style="display:none;background:transparent;color:var(--white);border:1px solid rgba(255,255,255,0.25);">Đóng</button>
+          </div>
+          <div id="message" role="status">Anh yêu em 💖</div>
+        </div>
+      </div>
+
+      <p style="margin:0;color:#6a2a48;font-size:14px;">Gửi em một trái tim nhỏ — lưu vào GitHub Pages để chia sẻ nhé.</p>
+    </section>
+  </main>
+
+  <script>
+    (function() {
+      const toggleBtn = document.getElementById('toggleBtn');
+      const hideBtn = document.getElementById('hideBtn');
+      const message = document.getElementById('message');
+      const heart = document.getElementById('heartShape');
+
+      function showMessage() {
+        message.style.display = 'block';
+        toggleBtn.setAttribute('aria-pressed', 'true');
+        toggleBtn.textContent = 'Đã gửi';
+        hideBtn.style.display = 'inline-block';
+        // briefly emphasize the heart
+        heart.classList.add('animated');
+      }
+
+      function hideMessage() {
+        message.style.display = 'none';
+        toggleBtn.setAttribute('aria-pressed', 'false');
+        toggleBtn.textContent = 'Nhấn vào đây';
+        hideBtn.style.display = 'none';
+      }
+
+      toggleBtn.addEventListener('click', function() {
+        if (message.style.display === 'block') {
+          hideMessage();
+        } else {
+          showMessage();
+        }
+      });
+
+      hideBtn.addEventListener('click', hideMessage);
+
+      // keyboard accessibility: space/enter toggles when focused
+      toggleBtn.addEventListener('keydown', function(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          toggleBtn.click();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
